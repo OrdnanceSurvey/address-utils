@@ -1,0 +1,15 @@
+apply plugin: 'jacoco'
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+// coveralls
+tasks.coveralls {
+    dependsOn 'check'
+}
+
+check.dependsOn jacocoTestReport
