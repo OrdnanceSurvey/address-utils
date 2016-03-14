@@ -236,7 +236,7 @@ public class PostcodeUtilTest {
     @Test
     public void shouldNotMatchOtherThanDistrictStrict() {
         checkIsLikelyDistrictPostcodeStrictAndIgnoreCaseAndSpacing(false, AREA_POSTCODES);
-        //checkIsLikelyDistrictPostcodeStrictAndIgnoreCaseAndSpacing(false, false, SECTOR_POSTCODES);
+        checkIsLikelyDistrictPostcodeStrictAndIgnoreCaseAndSpacing(false, false, SECTOR_POSTCODES);
         checkIsLikelyDistrictPostcodeStrictAndIgnoreCaseAndSpacing(false, UNIT_POSTCODES);
         checkIsLikelyDistrictPostcodeStrictAndIgnoreCaseAndSpacing(false, ALTERNATIVES);
     }
@@ -378,17 +378,25 @@ public class PostcodeUtilTest {
     }
 
     private void checkIsLikelyDistrictPostcodeStrictAndIgnoreCaseAndSpacing(boolean isExpected, String... strings) {
+        checkIsLikelyDistrictPostcodeStrictAndIgnoreCaseAndSpacing(isExpected, true, strings);
+    }
+
+    private void checkIsLikelyDistrictPostcodeStrictAndIgnoreCaseAndSpacing(boolean isExpected, boolean collapseSpaces, String... strings) {
         for (String s : strings) {
             if (isExpected) {
                 assertTrue("test input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s));
                 assertTrue("lowercase input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.toLowerCase()));
                 assertTrue("uppercase input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.toUpperCase()));
-                assertTrue("spacing removed input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.replaceAll("\\s","")));
+                if (collapseSpaces) {
+                    assertTrue("spacing removed input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.replaceAll("\\s","")));
+                }
             } else {
                 assertFalse("test input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s));
                 assertFalse("lowercase input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.toLowerCase()));
                 assertFalse("uppercase input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.toUpperCase()));
-                assertFalse("spacing removed input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.replaceAll("\\s","")));
+                if (collapseSpaces) {
+                    assertFalse("spacing removed input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.replaceAll("\\s","")));
+                }
             }
         }
     }

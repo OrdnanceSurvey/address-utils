@@ -99,6 +99,17 @@ public final class PostcodeUtil {
         return matcher.find() && value.matches(".*\\d.*");
     }
 
+    /**
+     * Assuming the postcode 'PO1 1AF', the district postcode is 'PO1'
+     *
+     * Given A = alpha character and N = numeric character, this method will validate that the format
+     * adheres to the patterns below and that the area postcode matches known values (data).
+     *
+     * Valid Format: AN, ANN, AAN, AANN, ANA, AANA
+     *
+     * @param value String under test
+     * @return true if considered a district postcode
+     */
     public static boolean isLikelyDistrictPostcodeStrict(String value) {
         Pattern pattern = Pattern.compile(District.PATTERN);
         Matcher matcher = pattern.matcher(value.trim());
