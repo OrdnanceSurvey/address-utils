@@ -170,6 +170,20 @@ public class PostcodeUtilTest {
     }
 
     @Test
+    public void shouldMatchSectorPostcodesStrict() {
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(SECTOR_POSTCODE_ORDNANCE_SURVEY);
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(SECTOR_POSTCODE_BBC);
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(SECTOR_POSTCODE_BUCKINGHAM_PALACE);
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(SECTOR_POSTCODE_HOUSES_OF_PARLIAMENT);
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(SECTOR_POSTCODE_CAMDEN);
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(SECTOR_POSTCODE_EDINBURGH_CASTLE);
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(SECTOR_POSTCODE_ABERYSTWYTH_UNIVERSITY);
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(SECTOR_POSTCODE_LANDS_END);
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(SECTOR_POSTCODE_SHERWOOD_FOREST);
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(SECTOR_POSTCODE_YORK);
+    }
+
+    @Test
     public void shouldMatchUnitPostcodes() {
         checkIsLikelyFullPostcodeAndIgnoreCaseAndSpacing(UNIT_POSTCODE_ORDNANCE_SURVEY);
         checkIsLikelyFullPostcodeAndIgnoreCaseAndSpacing(UNIT_POSTCODE_BBC);
@@ -244,9 +258,18 @@ public class PostcodeUtilTest {
     @Test
     public void shouldNotMatchOtherThanSector() {
         checkIsLikelySectorPostcodeAndIgnoreCaseAndSpacing(false, AREA_POSTCODES);
-        checkIsLikelySectorPostcodeAndIgnoreCaseAndSpacing(false, DISTRICT_POSTCODES);
+        // When spaces are removed we cannot differentiate between sectors and districts
+        // checkIsLikelySectorPostcodeAndIgnoreCaseAndSpacing(false, DISTRICT_POSTCODES);
         checkIsLikelySectorPostcodeAndIgnoreCaseAndSpacing(false, UNIT_POSTCODES);
         checkIsLikelySectorPostcodeAndIgnoreCaseAndSpacing(false, ALTERNATIVES);
+    }
+
+    @Test
+    public void shouldNotMatchOtherThanSectorStrict() {
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(false, AREA_POSTCODES);
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(false, DISTRICT_POSTCODES);
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(false, UNIT_POSTCODES);
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(false, ALTERNATIVES);
     }
 
     @Test
@@ -302,17 +325,10 @@ public class PostcodeUtilTest {
 
     private void checkIsLikelyFullPostcodeAndIgnoreCaseAndSpacing(boolean isExpected, String... strings) {
         for (String s : strings) {
-            if (isExpected) {
-                assertTrue("test input", PostcodeUtil.isLikelyFullPostcode(s));
-                assertTrue("lowercase input", PostcodeUtil.isLikelyFullPostcode(s.toLowerCase()));
-                assertTrue("uppercase input", PostcodeUtil.isLikelyFullPostcode(s.toUpperCase()));
-                assertTrue("spacing removed input", PostcodeUtil.isLikelyFullPostcode(s.replaceAll("\\s","")));
-            } else {
-                assertFalse("test input", PostcodeUtil.isLikelyFullPostcode(s));
-                assertFalse("lowercase input", PostcodeUtil.isLikelyFullPostcode(s.toLowerCase()));
-                assertFalse("uppercase input", PostcodeUtil.isLikelyFullPostcode(s.toUpperCase()));
-                assertFalse("spacing removed input", PostcodeUtil.isLikelyFullPostcode(s.replaceAll("\\s","")));
-            }
+            assertTrue("test input", PostcodeUtil.isLikelyFullPostcode(s) == isExpected);
+            assertTrue("lowercase input", PostcodeUtil.isLikelyFullPostcode(s.toLowerCase()) == isExpected);
+            assertTrue("uppercase input", PostcodeUtil.isLikelyFullPostcode(s.toUpperCase()) == isExpected);
+            assertTrue("spacing removed input", PostcodeUtil.isLikelyFullPostcode(s.replaceAll("\\s","")) == isExpected);
         }
     }
 
@@ -329,17 +345,10 @@ public class PostcodeUtilTest {
 
     private void checkIsLikelyAreaPostcodeAndIgnoreCaseAndSpacing(boolean isExpected, String... strings) {
         for (String s : strings) {
-            if (isExpected) {
-                assertTrue("test input", PostcodeUtil.isLikelyAreaPostcode(s));
-                assertTrue("lowercase input", PostcodeUtil.isLikelyAreaPostcode(s.toLowerCase()));
-                assertTrue("uppercase input", PostcodeUtil.isLikelyAreaPostcode(s.toUpperCase()));
-                assertTrue("spacing removed input", PostcodeUtil.isLikelyAreaPostcode(s.replaceAll("\\s","")));
-            } else {
-                assertFalse("test input", PostcodeUtil.isLikelyAreaPostcode(s));
-                assertFalse("lowercase input", PostcodeUtil.isLikelyAreaPostcode(s.toLowerCase()));
-                assertFalse("uppercase input", PostcodeUtil.isLikelyAreaPostcode(s.toUpperCase()));
-                assertFalse("spacing removed input", PostcodeUtil.isLikelyAreaPostcode(s.replaceAll("\\s","")));
-            }
+            assertTrue("test input", PostcodeUtil.isLikelyAreaPostcode(s) == isExpected);
+            assertTrue("lowercase input", PostcodeUtil.isLikelyAreaPostcode(s.toLowerCase()) == isExpected);
+            assertTrue("uppercase input", PostcodeUtil.isLikelyAreaPostcode(s.toUpperCase()) == isExpected);
+            assertTrue("spacing removed input", PostcodeUtil.isLikelyAreaPostcode(s.replaceAll("\\s","")) == isExpected);
         }
     }
 
@@ -354,20 +363,11 @@ public class PostcodeUtilTest {
     private void checkIsLikelyDistrictPostcodeAndIgnoreCaseAndSpacing(boolean isExpected, boolean collapseSpaces,
                                                                       String... strings) {
         for (String s : strings) {
-            if (isExpected) {
-                assertTrue("test input", PostcodeUtil.isLikelyDistrictPostcode(s));
-                assertTrue("lowercase input", PostcodeUtil.isLikelyDistrictPostcode(s.toLowerCase()));
-                assertTrue("uppercase input", PostcodeUtil.isLikelyDistrictPostcode(s.toUpperCase()));
-                if (collapseSpaces) {
-                    assertTrue("spacing removed input", PostcodeUtil.isLikelyDistrictPostcode(s.replaceAll("\\s","")));
-                }
-            } else {
-                assertFalse("test input", PostcodeUtil.isLikelyDistrictPostcode(s));
-                assertFalse("lowercase input", PostcodeUtil.isLikelyDistrictPostcode(s.toLowerCase()));
-                assertFalse("uppercase input", PostcodeUtil.isLikelyDistrictPostcode(s.toUpperCase()));
-                if (collapseSpaces) {
-                    assertFalse("spacing removed input", PostcodeUtil.isLikelyDistrictPostcode(s.replaceAll("\\s","")));
-                }
+            assertTrue("test input", PostcodeUtil.isLikelyDistrictPostcode(s) == isExpected);
+            assertTrue("lowercase input", PostcodeUtil.isLikelyDistrictPostcode(s.toLowerCase()) == isExpected);
+            assertTrue("uppercase input", PostcodeUtil.isLikelyDistrictPostcode(s.toUpperCase()) == isExpected);
+            if (collapseSpaces) {
+                assertTrue("spacing removed input", PostcodeUtil.isLikelyDistrictPostcode(s.replaceAll("\\s","")) == isExpected);
             }
         }
 
@@ -383,20 +383,11 @@ public class PostcodeUtilTest {
 
     private void checkIsLikelyDistrictPostcodeStrictAndIgnoreCaseAndSpacing(boolean isExpected, boolean collapseSpaces, String... strings) {
         for (String s : strings) {
-            if (isExpected) {
-                assertTrue("test input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s));
-                assertTrue("lowercase input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.toLowerCase()));
-                assertTrue("uppercase input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.toUpperCase()));
-                if (collapseSpaces) {
-                    assertTrue("spacing removed input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.replaceAll("\\s","")));
-                }
-            } else {
-                assertFalse("test input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s));
-                assertFalse("lowercase input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.toLowerCase()));
-                assertFalse("uppercase input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.toUpperCase()));
-                if (collapseSpaces) {
-                    assertFalse("spacing removed input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.replaceAll("\\s","")));
-                }
+            assertTrue("test input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s) == isExpected);
+            assertTrue("lowercase input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.toLowerCase()) == isExpected);
+            assertTrue("uppercase input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.toUpperCase()) == isExpected);
+            if (collapseSpaces) {
+                assertTrue("spacing removed input", PostcodeUtil.isLikelyDistrictPostcodeStrict(s.replaceAll("\\s","")) == isExpected);
             }
         }
     }
@@ -407,18 +398,22 @@ public class PostcodeUtilTest {
 
     private void checkIsLikelySectorPostcodeAndIgnoreCaseAndSpacing(boolean isExpected, String... strings) {
         for (String s : strings) {
-            if (isExpected) {
-                assertTrue("test input", PostcodeUtil.isLikelySectorPostcode(s));
-                assertTrue("lowercase input", PostcodeUtil.isLikelySectorPostcode(s.toLowerCase()));
-                assertTrue("uppercase input", PostcodeUtil.isLikelySectorPostcode(s.toUpperCase()));
-                assertTrue("spacing removed input", PostcodeUtil.isLikelySectorPostcode(s.replaceAll("\\s","")));
-            } else {
-                // test strict for the negative
-                assertFalse("test input", PostcodeUtil.isLikelySectorPostcodeStrict(s));
-                assertFalse("lowercase input", PostcodeUtil.isLikelySectorPostcodeStrict(s.toLowerCase()));
-                assertFalse("uppercase input", PostcodeUtil.isLikelySectorPostcodeStrict(s.toUpperCase()));
-                assertFalse("spacing removed input", PostcodeUtil.isLikelySectorPostcodeStrict(s.replaceAll("\\s","")));
-            }
+            assertTrue("test input", PostcodeUtil.isLikelySectorPostcode(s) == isExpected);
+            assertTrue("lowercase input", PostcodeUtil.isLikelySectorPostcode(s.toLowerCase()) == isExpected);
+            assertTrue("uppercase input", PostcodeUtil.isLikelySectorPostcode(s.toUpperCase()) == isExpected);
+            assertTrue("spacing removed input", PostcodeUtil.isLikelySectorPostcode(s.replaceAll("\\s","")) == isExpected);
+        }
+    }
+
+    private void checkIsLikelySectorPostcodeStrictAndIgnoreCase(String... strings) {
+        checkIsLikelySectorPostcodeStrictAndIgnoreCase(true, strings);
+    }
+
+    private void checkIsLikelySectorPostcodeStrictAndIgnoreCase(boolean isExpected, String... strings) {
+        for (String s : strings) {
+            assertTrue("test input", PostcodeUtil.isLikelySectorPostcodeStrict(s) == isExpected);
+            assertTrue("lowercase input", PostcodeUtil.isLikelySectorPostcodeStrict(s.toLowerCase()) == isExpected);
+            assertTrue("uppercase input", PostcodeUtil.isLikelySectorPostcodeStrict(s.toUpperCase()) == isExpected);
         }
     }
 
@@ -428,15 +423,9 @@ public class PostcodeUtilTest {
 
     private void checkIsLikelyUnitPostcodeStrictAndIgnoreCase(boolean isExpected, String... strings) {
         for (String s : strings) {
-            if (isExpected) {
-                assertTrue("test input", PostcodeUtil.isLikelyUnitPostcodeStrict(s));
-                assertTrue("lowercase input", PostcodeUtil.isLikelyUnitPostcodeStrict(s.toLowerCase()));
-                assertTrue("uppercase input", PostcodeUtil.isLikelyUnitPostcodeStrict(s.toUpperCase()));
-            } else {
-                assertFalse("test input", PostcodeUtil.isLikelyUnitPostcodeStrict(s));
-                assertFalse("lowercase input", PostcodeUtil.isLikelyUnitPostcodeStrict(s.toLowerCase()));
-                assertFalse("uppercase input", PostcodeUtil.isLikelyUnitPostcodeStrict(s.toUpperCase()));
-            }
+            assertTrue("test input", PostcodeUtil.isLikelyUnitPostcodeStrict(s) == isExpected);
+            assertTrue("lowercase input", PostcodeUtil.isLikelyUnitPostcodeStrict(s.toLowerCase()) == isExpected);
+            assertTrue("uppercase input", PostcodeUtil.isLikelyUnitPostcodeStrict(s.toUpperCase()) == isExpected);
         }
     }
 
